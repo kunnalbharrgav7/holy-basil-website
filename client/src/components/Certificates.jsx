@@ -13,11 +13,11 @@ import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
 
-import FSMS from "../assets/certificates/fsms-cert.png";
-import FDA from "../assets/certificates/fda-cert.png";
-import GMP from "../assets/certificates/gmp-cert.png";
-import HACCP from "../assets/certificates/haccp-cert.png";
-import ISO from "../assets/certificates/iso-cert.png";
+import FSMS from "../assets/Certificates/fsms-cert.png";
+import FDA from "../assets/Certificates/fda-cert.png";
+import GMP from "../assets/Certificates/gmp-cert.png";
+import HACCP from "../assets/Certificates/haccp-cert.png";
+import ISO from "../assets/Certificates/iso-cert.png";
 
 const certificates = [
   {

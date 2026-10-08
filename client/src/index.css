@@ -1,0 +1,152 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================
+   ROOT (Dark Theme Update)
+========================================================= */
+
+:root {
+  color: #f5f2eb; /* 🌟 White/Ivory Text */
+  background: #080d0a; /* 🌟 Deep Forest Dark */
+  font-family: Manrope, sans-serif;
+}
+
+html {
+  scroll-behavior: auto;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  background: #080d0a; /* 🌟 Dark Theme Base */
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+::selection {
+  background: #34d399; /* 🌟 Emerald Selection */
+  color: #080d0a;
+}
+
+/* =========================================================
+   RESPONSIVE MEDIA
+========================================================= */
+
+img,
+video,
+svg,
+canvas {
+  max-width: 100%;
+}
+img,
+video {
+  height: auto;
+}
+
+/* =========================================================
+   COMPONENTS (Dark Theme Buttons & Surfaces)
+========================================================= */
+
+@layer components {
+  .container-hba {
+    @apply mx-auto w-[92%] max-w-[1180px];
+  }
+
+  .eyebrow {
+    @apply text-[11px] font-bold uppercase tracking-[0.24em] text-emerald-400/80;
+  }
+
+  .display {
+    @apply font-display text-5xl leading-[.92] tracking-[-.03em] md:text-7xl text-white;
+  }
+
+  /* 🌟 Glowing Primary Button */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-3 text-sm font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:shadow-[0_0_25px_rgba(16,185,129,0.4)];
+  }
+
+  /* 🌟 Sleek Outline Button */
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-emerald-500/30 px-6 py-3 text-sm font-bold text-emerald-50 transition duration-300 hover:-translate-y-0.5 hover:bg-emerald-600/20 hover:border-emerald-400;
+  }
+
+  /* 🌟 Dark Card Surface */
+  .surface {
+    @apply rounded-[2rem] border border-emerald-900/30 bg-[#121E1A];
+  }
+}
+
+/* =========================================================
+   EFFECTS & ANIMATIONS
+========================================================= */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.noise {
+  background-image: radial-gradient(
+    rgba(52, 211, 153, 0.05) 0.7px,
+    /* Emerald Noise */ transparent 0.7px
+  );
+  background-size: 10px 10px;
+}
+
+@media (max-width: 374px) {
+  .container-hba {
+    width: calc(100% - 24px);
+    max-width: none;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+a,
+button {
+  overflow-wrap: break-word;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 18s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}

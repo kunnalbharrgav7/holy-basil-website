@@ -8,6 +8,7 @@ import {
   Mail,
   Phone,
 } from "lucide-react";
+import Logo from "./Logo";
 
 export default function Footer() {
   return (
@@ -21,9 +22,9 @@ export default function Footer() {
           {/* Column 1: Brand & Socials */}
           <div className="flex flex-col justify-between space-y-6">
             <div>
-              <h3 className="font-serif text-2xl font-medium text-white mb-3">
-                Holy Basil Ayurveda
-              </h3>
+              <div className="mb-4">
+                <Logo />
+              </div>
               <p className="text-sm leading-relaxed text-[#F5F2EB]/60">
                 Premium Ayurvedic wellness products and quality-focused
                 private-label manufacturing for modern brands.

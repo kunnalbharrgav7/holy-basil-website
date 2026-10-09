@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation, Outlet, Link } from "react-router-dom";
+import logoImg from "../assets/Logo/logo.png";
 import {
   LayoutDashboard,
   Package,
@@ -142,9 +143,11 @@ export default function AdminLayout() {
             to="/"
             className={`flex items-center gap-3 overflow-hidden transition-opacity hover:opacity-80 ${collapsed ? "w-full justify-center" : ""}`}
           >
-            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-emerald-900/30 border border-emerald-500/20 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
-              <Leaf size={20} />
-            </div>
+            <img 
+              src={logoImg} 
+              alt="Logo" 
+              className="h-10 w-10 object-contain shrink-0" 
+            />
 
             {!collapsed && (
               <div className="min-w-0">

@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   Wallet,
 } from "lucide-react";
+import { StatsSkeleton, TableSkeleton } from "../../components/Skeletons";
 
 export default function FranchiseDashboard() {
   const { user } = useAuth();
@@ -44,8 +45,11 @@ export default function FranchiseDashboard() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-emerald-500" />
+      <div className="animate-in fade-in duration-300 w-full pt-8">
+        <StatsSkeleton count={4} />
+        <div className="mt-8">
+          <TableSkeleton rows={4} columns={2} />
+        </div>
       </div>
     );
   }

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Check, X } from "lucide-react";
 import { useGoogleLogin } from "@react-oauth/google";
+import logoImg from "../assets/Logo/logo.png";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -11,7 +12,8 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const { register, googleLogin } = useAuth();
   const navigate = useNavigate();
@@ -38,7 +40,7 @@ export default function Register() {
       return;
     }
 
-    setLoading(true);
+    setIsRegistering(true);
     try {
       await register({ name, email, phone, password });
       navigate("/");
@@ -47,14 +49,14 @@ export default function Register() {
         err.response?.data?.message || "Registration failed. Please try again.",
       );
     } finally {
-      setLoading(false);
+      setIsRegistering(false);
     }
   };
 
   const handleGoogleRegister = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        setLoading(true);
+        setIsGoogleLoading(true);
         const res = await fetch(
           "https://www.googleapis.com/oauth2/v3/userinfo",
           {
@@ -73,7 +75,7 @@ export default function Register() {
         console.error("Google Auth Error:", err);
         setError("Google authentication failed. Please try again.");
       } finally {
-        setLoading(false);
+        setIsGoogleLoading(false);
       }
     },
     onError: () => {
@@ -87,18 +89,18 @@ export default function Register() {
         {/* Left Banner (Exact Original) */}
         <div className="p-8 md:p-12 flex flex-col justify-between border-r border-emerald-900/30">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#F5F2EB]/60">
-              Holy Basil Ayurveda
-            </span>
-            <h2 className="font-serif text-3xl md:text-4xl text-white mt-8 leading-snug">
+            <div className="mb-10 flex justify-center">
+              <img src={logoImg} alt="Holy Basil Ayurveda" className="h-28 md:h-36 lg:h-40 w-auto object-contain transition-transform hover:scale-105" />
+            </div>
+            <h2 className="font-serif text-3xl md:text-4xl text-white leading-snug text-center">
               "Begin your journey toward balanced vitality and inner harmony."
             </h2>
-            <p className="mt-6 text-xs md:text-sm text-[#F5F2EB]/60 leading-relaxed">
+            <p className="mt-6 text-xs md:text-sm text-[#F5F2EB]/60 leading-relaxed text-center">
               Create an account to unlock exclusive rituals, expert botanical
               formulations, and personalized care.
             </p>
           </div>
-          <div className="pt-8 border-t border-emerald-900/20 flex items-center gap-6 text-[10px] uppercase tracking-widest text-[#F5F2EB]/60 font-bold">
+          <div className="pt-8 border-t border-emerald-900/20 flex items-center justify-center gap-6 text-[10px] uppercase tracking-widest text-[#F5F2EB]/60 font-bold">
             <span>🌿 Pure Heritage</span>
             <span>•</span>
             <span>Cleanroom Crafted</span>
@@ -226,23 +228,33 @@ export default function Register() {
 
             <button
               type="submit"
-              disabled={loading || !isPasswordValid}
-              className="w-full py-3.5 mt-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all cursor-pointer disabled:opacity-50"
+              disabled={isRegistering || isGoogleLoading || !isPasswordValid}
+              className={`w-full py-3.5 mt-2 rounded-xl bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all ${
+                isRegistering
+                  ? "opacity-80 cursor-wait"
+                  : isGoogleLoading || !isPasswordValid
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-emerald-500 cursor-pointer"
+              }`}
             >
-              {loading ? "Creating account..." : "Create Account"}
+              {isRegistering ? "Creating account..." : "Create Account"}
             </button>
           </form>
 
           {/* Google Button */}
           <button
             type="button"
-            // DHYAN DEIN: Register.jsx me ye 'handleGoogleRegister' hoga
-            // Aur Login.jsx me ye 'handleGoogleLogin' hoga (jo bhi aapka function name ho)
             onClick={() => handleGoogleRegister()}
-            disabled={loading}
-            className="w-full mt-4 flex items-center justify-center gap-3 py-2.5 rounded-xl bg-[#121E1A] hover:bg-[#162521] border border-emerald-900/40 text-xs font-bold text-white transition-all cursor-pointer disabled:opacity-50"
+            disabled={isRegistering || isGoogleLoading}
+            className={`w-full mt-4 flex items-center justify-center gap-3 py-2.5 rounded-xl bg-[#121E1A] border border-emerald-900/40 text-xs font-bold text-white transition-all ${
+              isGoogleLoading
+                ? "opacity-80 cursor-wait"
+                : isRegistering
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-[#162521] cursor-pointer"
+            }`}
           >
-            {loading ? (
+            {isGoogleLoading ? (
               "Connecting..."
             ) : (
               <>

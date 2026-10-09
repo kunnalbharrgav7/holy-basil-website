@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
+import ProductCardSkeleton from "../components/ProductCardSkeleton";
 import { getProducts } from "../services/productService";
 
 export default function Products() {
@@ -175,8 +176,10 @@ export default function Products() {
 
           <div className="flex-1 w-full">
             {loading && (
-              <div className="py-20 text-center text-[#F5F2EB]/50">
-                Loading products...
+              <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
+                {[...Array(6)].map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))}
               </div>
             )}
             {error && !loading && (

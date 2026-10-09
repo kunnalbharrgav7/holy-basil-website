@@ -14,6 +14,7 @@ import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { useAuth } from "../context/AuthContext";
 import ProductCard from "../components/ProductCard";
+import { DetailSkeleton } from "../components/Skeletons";
 
 export default function ProductDetails() {
   const { slug } = useParams();
@@ -61,10 +62,8 @@ export default function ProductDetails() {
 
   if (loading)
     return (
-      <main className="min-h-screen bg-[#080D0A] py-20 flex items-center justify-center">
-        <div className="text-emerald-400 font-serif text-xl">
-          Loading formulation...
-        </div>
+      <main className="min-h-screen bg-[#080D0A] py-10 md:py-16">
+        <DetailSkeleton />
       </main>
     );
   if (error || !product)

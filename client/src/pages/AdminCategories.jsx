@@ -7,6 +7,7 @@ import {
   deleteCategory,
 } from "../services/categoryService";
 import { uploadProductImage } from "../services/uploadService";
+import { CategorySkeleton } from "../components/Skeletons";
 
 export default function AdminCategories() {
   const [categories, setCategories] = useState([]);
@@ -99,14 +100,6 @@ export default function AdminCategories() {
       alert("Failed to delete category.");
     }
   };
-
-  if (loading) {
-    return (
-      <main className="min-h-screen px-4 py-12 flex items-center justify-center bg-[#080D0A]">
-        <Loader2 className="animate-spin text-emerald-400" size={32} />
-      </main>
-    );
-  }
 
   return (
     <main className="min-h-screen px-4 py-10 sm:px-6 lg:px-8 lg:py-12 bg-[#080D0A] text-[#F5F2EB]">
@@ -220,36 +213,40 @@ export default function AdminCategories() {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            {categories.map((category) => (
-              <div
-                key={category._id}
-                className="group relative overflow-hidden rounded-2xl bg-[#121E1A] border border-emerald-900/30 p-2 shadow-sm transition hover:shadow-[0_0_20px_rgba(16,185,129,0.1)] hover:border-emerald-500/30"
-              >
-                <div className="aspect-[16/9] w-full overflow-hidden rounded-xl bg-[#080D0A] border border-emerald-900/20 mb-3 relative">
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="w-full h-full object-cover transition duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
-                  />
-                  <button
-                    onClick={() => handleDelete(category._id)}
-                    className="absolute top-2 right-2 grid h-8 w-8 place-items-center rounded-full bg-red-950/80 text-red-400 shadow backdrop-blur border border-red-900/50 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-600 hover:text-white"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+            {loading ? (
+              <CategorySkeleton count={4} />
+            ) : (
+              categories.map((category) => (
+                <div
+                  key={category._id}
+                  className="group relative overflow-hidden rounded-2xl bg-[#121E1A] border border-emerald-900/30 p-2 shadow-sm transition hover:shadow-[0_0_20px_rgba(16,185,129,0.1)] hover:border-emerald-500/30"
+                >
+                  <div className="aspect-[16/9] w-full overflow-hidden rounded-xl bg-[#080D0A] border border-emerald-900/20 mb-3 relative">
+                    <img
+                      src={category.image}
+                      alt={category.name}
+                      className="w-full h-full object-cover transition duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                    />
+                    <button
+                      onClick={() => handleDelete(category._id)}
+                      className="absolute top-2 right-2 grid h-8 w-8 place-items-center rounded-full bg-red-950/80 text-red-400 shadow backdrop-blur border border-red-900/50 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-600 hover:text-white"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                  <div className="px-2 pb-2">
+                    <h3 className="font-serif text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">
+                      {category.name}
+                    </h3>
+                    {category.description && (
+                      <p className="text-xs text-[#F5F2EB]/50 mt-0.5 line-clamp-1">
+                        {category.description}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div className="px-2 pb-2">
-                  <h3 className="font-serif text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">
-                    {category.name}
-                  </h3>
-                  {category.description && (
-                    <p className="text-xs text-[#F5F2EB]/50 mt-0.5 line-clamp-1">
-                      {category.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </section>
       </div>

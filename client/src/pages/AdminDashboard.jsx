@@ -26,6 +26,7 @@ import {
   updateFranchiseStatus,
 } from "../services/franchiseService";
 import { getRoyaltySummary } from "../services/orderService";
+import { StatsSkeleton, TableSkeleton } from "../components/Skeletons";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -172,7 +173,17 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {error && (
+        {loading && (
+          <div className="mt-8">
+            <StatsSkeleton count={4} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+               <TableSkeleton rows={3} />
+               <TableSkeleton rows={3} />
+            </div>
+          </div>
+        )}
+
+        {!loading && error && (
           <div className="rounded-2xl border border-red-900/50 bg-red-950/40 px-5 py-4 text-sm text-red-400">
             {error}
           </div>
@@ -181,7 +192,9 @@ export default function AdminDashboard() {
         {/* ========================================================= */}
         {/* 🌟 2. PRIMARY FINANCIAL KPI GRID (SMART LINKS ADDED)      */}
         {/* ========================================================= */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {!loading && (
+          <>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             icon={TrendingUp}
             label="Direct B2C Revenue"
@@ -484,6 +497,8 @@ export default function AdminDashboard() {
             )}
           </div>
         </section>
+        </>
+        )}
       </div>
     </main>
   );

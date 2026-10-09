@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import { ShoppingCart, Plus, Minus, Loader2, Search } from "lucide-react";
 import toast from "react-hot-toast";
+import ProductCardSkeleton from "../../components/ProductCardSkeleton";
 
 export default function FranchiseShop() {
   const navigate = useNavigate();
@@ -118,14 +119,6 @@ export default function FranchiseShop() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-emerald-500" />
-      </div>
-    );
-  }
-
   return (
     <div className="mx-auto max-w-7xl pb-24 animate-in fade-in duration-300 px-2 sm:px-4">
       {/* Header */}
@@ -181,7 +174,14 @@ export default function FranchiseShop() {
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {filteredProducts.length > 0 ? (
+        {loading ? (
+          <>
+            <ProductCardSkeleton />
+            <ProductCardSkeleton />
+            <ProductCardSkeleton />
+            <ProductCardSkeleton />
+          </>
+        ) : filteredProducts.length > 0 ? (
           filteredProducts.map((product) => {
             const qty = cart[product._id] || 0;
             const wholesalePrice = product.wholesalePrice || product.price;

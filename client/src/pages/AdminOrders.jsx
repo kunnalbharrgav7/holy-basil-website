@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Eye, RefreshCw, ShoppingBag, Filter, X, MapPin } from "lucide-react";
 import { getAdminOrders, updateOrderStatus } from "../services/orderService";
+import { StatsSkeleton, TableSkeleton } from "../components/Skeletons";
 
 const ORDER_STATUSES = [
   "Pending",
@@ -167,36 +168,38 @@ export default function AdminOrders() {
         )}
 
         {/* SUMMARY CARDS - Responsive Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-          <SummaryCard label="Total Orders" value={orders.length} />
-          <SummaryCard
-            label="Pending Fulfillment"
-            value={
-              orders.filter((order) => order.orderStatus === "Pending").length
-            }
-          />
-          <SummaryCard
-            label="Franchise Handled"
-            value={
-              orders.filter((order) => order.fulfillmentType === "FRANCHISE")
-                .length
-            }
-          />
-          <SummaryCard
-            label="Successfully Delivered"
-            value={
-              orders.filter((order) => order.orderStatus === "Delivered").length
-            }
-          />
-        </div>
+        {loading ? (
+          <StatsSkeleton count={4} />
+        ) : (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+            <SummaryCard label="Total Orders" value={orders.length} />
+            <SummaryCard
+              label="Pending Fulfillment"
+              value={
+                orders.filter((order) => order.orderStatus === "Pending").length
+              }
+            />
+            <SummaryCard
+              label="Franchise Handled"
+              value={
+                orders.filter((order) => order.fulfillmentType === "FRANCHISE")
+                  .length
+              }
+            />
+            <SummaryCard
+              label="Successfully Delivered"
+              value={
+                orders.filter((order) => order.orderStatus === "Delivered").length
+              }
+            />
+          </div>
+        )}
 
         {/* ORDERS TABLE SECTION */}
         <section>
-          <div className="overflow-hidden rounded-[1.5rem] sm:rounded-[2.5rem] border border-emerald-900/30 bg-[#121E1A] shadow-lg">
+          <div className="overflow-hidden rounded-[1.5rem] sm:rounded-[2.5rem] border border-emerald-900/30 bg-[#121E1A] shadow-lg mt-8">
             {loading ? (
-              <div className="p-10 sm:p-16 text-center text-xs sm:text-sm text-[#F5F2EB]/50">
-                Loading orders database...
-              </div>
+              <TableSkeleton rows={6} columns={7} />
             ) : filteredOrders.length === 0 ? (
               <EmptyOrders />
             ) : (

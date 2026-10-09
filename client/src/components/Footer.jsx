@@ -22,7 +22,7 @@ export default function Footer() {
           {/* Column 1: Brand & Socials */}
           <div className="flex flex-col justify-between space-y-6">
             <div>
-              <div className="mb-4">
+              <div className="mb-5 ml-4 sm:ml-8 lg:ml-12">
                 <Logo />
               </div>
               <p className="text-sm leading-relaxed text-[#F5F2EB]/60">

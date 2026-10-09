@@ -16,6 +16,7 @@ import {
   User,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { StatsSkeleton, TableSkeleton } from "../../components/Skeletons";
 
 export default function FranchiseOrders() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -78,14 +79,6 @@ export default function FranchiseOrders() {
   } else if (paymentParam === "online") {
     filteredB2cOrders = b2cOrders.filter(
       (o) => o.paymentMethod === "online" && o.orderStatus === "Delivered",
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-emerald-500" />
-      </div>
     );
   }
 
@@ -172,7 +165,9 @@ export default function FranchiseOrders() {
             </div>
           )}
 
-          {filteredB2cOrders.length > 0 ? (
+          {loading ? (
+            <StatsSkeleton count={3} />
+          ) : filteredB2cOrders.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredB2cOrders.map((order) => (
                 <div
@@ -310,7 +305,9 @@ export default function FranchiseOrders() {
               </span>
             </div>
 
-            {b2bOrders.length > 0 ? (
+            {loading ? (
+              <TableSkeleton rows={4} columns={7} />
+            ) : b2bOrders.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-[#F5F2EB]/80">
                   <thead className="text-[10px] uppercase tracking-widest text-emerald-400/60 border-b border-emerald-900/35">

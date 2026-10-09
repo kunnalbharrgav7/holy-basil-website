@@ -14,6 +14,7 @@ import {
   getRoyaltySummary,
   updateRoyaltyStatus,
 } from "../services/orderService";
+import { StatsSkeleton, TableSkeleton } from "../components/Skeletons";
 
 export default function AdminRoyalties() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -126,49 +127,51 @@ export default function AdminRoyalties() {
         )}
 
         {/* 🌟 SUMMARY CARDS (Clickable to Filter) */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-5">
-          {/* Total Generated Card */}
-          <div
-            onClick={() => clearFilter()}
-            className={`cursor-pointer rounded-[1.5rem] sm:rounded-[2.5rem] border p-4 sm:p-8 shadow-lg transition-all hover:border-emerald-500/50 ${!statusFilter ? "bg-gradient-to-br from-[#121E1A] to-[#0B1310] border-emerald-500 ring-2 ring-emerald-500/20" : "bg-gradient-to-br from-[#121E1A] to-[#0B1310] border-emerald-900/30"}`}
-          >
-            <p className="text-[9px] sm:text-xs font-bold uppercase tracking-wider text-[#F5F2EB]/50 flex items-center gap-1.5 sm:gap-2 truncate">
-              <IndianRupee
-                size={12}
-                className="sm:w-3.5 sm:h-3.5 text-emerald-400 shrink-0"
-              />{" "}
-              Total Generated (Click to View All)
-            </p>
-            <p className="mt-2 sm:mt-3 text-xl sm:text-4xl font-bold font-serif text-white truncate">
-              ₹
-              {(royaltyData.totalRoyaltyGenerated || 0).toLocaleString("en-IN")}
-            </p>
-          </div>
+        {loading ? (
+          <StatsSkeleton count={2} />
+        ) : (
+          <div className="grid grid-cols-2 gap-3 sm:gap-5">
+            {/* Total Generated Card */}
+            <div
+              onClick={() => clearFilter()}
+              className={`cursor-pointer rounded-[1.5rem] sm:rounded-[2.5rem] border p-4 sm:p-8 shadow-lg transition-all hover:border-emerald-500/50 ${!statusFilter ? "bg-gradient-to-br from-[#121E1A] to-[#0B1310] border-emerald-500 ring-2 ring-emerald-500/20" : "bg-gradient-to-br from-[#121E1A] to-[#0B1310] border-emerald-900/30"}`}
+            >
+              <p className="text-[9px] sm:text-xs font-bold uppercase tracking-wider text-[#F5F2EB]/50 flex items-center gap-1.5 sm:gap-2 truncate">
+                <IndianRupee
+                  size={12}
+                  className="sm:w-3.5 sm:h-3.5 text-emerald-400 shrink-0"
+                />{" "}
+                Total Generated (Click to View All)
+              </p>
+              <p className="mt-2 sm:mt-3 text-xl sm:text-4xl font-bold font-serif text-white truncate">
+                ₹
+                {(royaltyData.totalRoyaltyGenerated || 0).toLocaleString("en-IN")}
+              </p>
+            </div>
 
-          {/* Total Pending Card */}
-          <div
-            onClick={() => setSearchParams({ status: "pending" })}
-            className={`cursor-pointer rounded-[1.5rem] sm:rounded-[2.5rem] border p-4 sm:p-8 shadow-lg transition-all hover:border-amber-500/50 ${statusFilter === "pending" ? "bg-gradient-to-br from-[#1a1810] to-[#0D0A08] border-amber-500 ring-2 ring-amber-500/20 scale-[1.02]" : "bg-gradient-to-br from-[#1a1810] to-[#0D0A08] border-amber-900/30"}`}
-          >
-            <p className="text-[9px] sm:text-xs font-bold uppercase tracking-wider text-[#F5F2EB]/50 flex items-center gap-1.5 sm:gap-2 truncate">
-              <Clock
-                size={12}
-                className="sm:w-3.5 sm:h-3.5 text-amber-400 shrink-0"
-              />{" "}
-              Total Pending Dues (Click to Filter)
-            </p>
-            <p className="mt-2 sm:mt-3 text-xl sm:text-4xl font-bold font-serif text-amber-400 truncate">
-              ₹{(royaltyData.totalPendingRoyalty || 0).toLocaleString("en-IN")}
-            </p>
+            {/* Total Pending Card */}
+            <div
+              onClick={() => setSearchParams({ status: "pending" })}
+              className={`cursor-pointer rounded-[1.5rem] sm:rounded-[2.5rem] border p-4 sm:p-8 shadow-lg transition-all hover:border-amber-500/50 ${statusFilter === "pending" ? "bg-gradient-to-br from-[#1a1810] to-[#0D0A08] border-amber-500 ring-2 ring-amber-500/20 scale-[1.02]" : "bg-gradient-to-br from-[#1a1810] to-[#0D0A08] border-amber-900/30"}`}
+            >
+              <p className="text-[9px] sm:text-xs font-bold uppercase tracking-wider text-[#F5F2EB]/50 flex items-center gap-1.5 sm:gap-2 truncate">
+                <Clock
+                  size={12}
+                  className="sm:w-3.5 sm:h-3.5 text-amber-400 shrink-0"
+                />{" "}
+                Total Pending Dues (Click to Filter)
+              </p>
+              <p className="mt-2 sm:mt-3 text-xl sm:text-4xl font-bold font-serif text-amber-400 truncate">
+                ₹{(royaltyData.totalPendingRoyalty || 0).toLocaleString("en-IN")}
+              </p>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* TABLE & MOBILE CARD VIEW */}
         <div className="overflow-hidden rounded-[1.5rem] sm:rounded-[2.5rem] border border-emerald-900/30 bg-[#121E1A] shadow-lg">
           {loading ? (
-            <div className="p-10 sm:p-16 text-center text-xs sm:text-sm text-[#F5F2EB]/50">
-              Loading database records...
-            </div>
+            <TableSkeleton rows={5} columns={6} />
           ) : filteredOrders.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-10 sm:p-16 text-center">
               <Store

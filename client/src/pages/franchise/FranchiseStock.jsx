@@ -73,13 +73,29 @@ export default function FranchiseStock() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 size={40} className="animate-spin text-emerald-500" />
-      </div>
-    );
-  }
+  const StockSkeleton = () => (
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {[...Array(6)].map((_, i) => (
+        <div
+          key={i}
+          className="flex flex-col justify-between rounded-[2rem] border border-emerald-900/30 bg-[#121E1A] p-6 shadow-lg animate-pulse"
+        >
+          <div className="flex items-center gap-4 mb-4">
+            <div className="h-16 w-16 rounded-2xl bg-emerald-900/30"></div>
+            <div className="space-y-2">
+              <div className="h-5 w-24 bg-emerald-900/40 rounded"></div>
+              <div className="h-4 w-16 bg-emerald-900/20 rounded"></div>
+            </div>
+          </div>
+          <div className="my-5 h-24 rounded-2xl bg-[#080D0A] border border-emerald-900/20"></div>
+          <div className="border-t border-emerald-900/20 pt-4 space-y-2">
+            <div className="h-4 w-1/3 bg-emerald-900/30 rounded"></div>
+            <div className="h-8 w-full bg-emerald-900/20 rounded-xl"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className="mx-auto max-w-7xl pb-24 animate-in fade-in duration-300 px-2 sm:px-4">
@@ -98,7 +114,9 @@ export default function FranchiseStock() {
       </div>
 
       {/* Stock Cards Grid */}
-      {stocks.length > 0 ? (
+      {loading ? (
+        <StockSkeleton />
+      ) : stocks.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {stocks.map((item) => {
             const product = item.product;

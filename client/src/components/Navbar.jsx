@@ -122,7 +122,7 @@ export default function Navbar() {
       </div>
 
       <div className="flex h-20 min-w-0 items-center justify-between gap-2 px-3 sm:px-4 lg:px-5 xl:px-8 2xl:px-10">
-        <div className="shrink-0">
+        <div className="shrink-0 ml-4 sm:ml-8 lg:ml-12">
           <Logo />
         </div>
 

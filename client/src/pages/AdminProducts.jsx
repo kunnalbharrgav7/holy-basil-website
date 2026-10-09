@@ -11,6 +11,7 @@ import {
   Search, // 🌟 Search icon import kiya
   Loader2,
 } from "lucide-react";
+import ProductCardSkeleton from "../components/ProductCardSkeleton";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -57,8 +58,14 @@ export default function AdminProducts() {
 
   if (loading)
     return (
-      <main className="min-h-screen px-4 py-12 flex items-center justify-center bg-[#080D0A]">
-        <Loader2 className="animate-spin text-emerald-400" size={32} />
+      <main className="min-h-screen px-3 py-8 sm:px-6 lg:px-8 lg:py-12 bg-[#080D0A]">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+            {[...Array(6)].map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
       </main>
     );
 

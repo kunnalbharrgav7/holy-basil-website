@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { getAdminEnquiries, updateEnquiry } from "../services/enquiryService";
+import { StatsSkeleton, TableSkeleton } from "../components/Skeletons";
 
 const ENQUIRY_STATUSES = [
   "New",
@@ -142,36 +143,40 @@ export default function AdminEnquiries() {
 
         {/* SUMMARY CARDS - Responsive Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-          <SummaryCard label="Total Enquiries" value={enquiries.length} />
-          <SummaryCard
-            label="New Enquiries"
-            value={
-              enquiries.filter((enquiry) => enquiry.status === "New").length
-            }
-          />
-          <SummaryCard
-            label="In Discussion"
-            value={
-              enquiries.filter((enquiry) => enquiry.status === "In Discussion")
-                .length
-            }
-          />
-          <SummaryCard
-            label="Completed"
-            value={
-              enquiries.filter((enquiry) => enquiry.status === "Completed")
-                .length
-            }
-          />
+          {loading ? (
+            <StatsSkeleton count={4} />
+          ) : (
+            <>
+              <SummaryCard label="Total Enquiries" value={enquiries.length} />
+              <SummaryCard
+                label="New Enquiries"
+                value={
+                  enquiries.filter((enquiry) => enquiry.status === "New").length
+                }
+              />
+              <SummaryCard
+                label="In Discussion"
+                value={
+                  enquiries.filter((enquiry) => enquiry.status === "In Discussion")
+                    .length
+                }
+              />
+              <SummaryCard
+                label="Completed"
+                value={
+                  enquiries.filter((enquiry) => enquiry.status === "Completed")
+                    .length
+                }
+              />
+            </>
+          )}
         </div>
 
         {/* ENQUIRIES LIST SECTION */}
         <section>
           <div className="overflow-hidden rounded-[1.5rem] sm:rounded-[2.5rem] border border-emerald-900/30 bg-[#121E1A] shadow-lg">
             {loading ? (
-              <div className="p-10 sm:p-16 text-center text-xs sm:text-sm text-[#F5F2EB]/50">
-                Loading enquiries pipeline...
-              </div>
+              <TableSkeleton rows={5} />
             ) : filteredEnquiries.length === 0 ? (
               <EmptyEnquiries />
             ) : (

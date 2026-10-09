@@ -4,12 +4,14 @@ import { useAuth } from "../context/AuthContext";
 import { CheckCircle2, X } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
 import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
+import logoImg from "../assets/Logo/logo.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   // Forgot Password States
   const [showForgotModal, setShowForgotModal] = useState(false);
@@ -24,7 +26,7 @@ export default function Login() {
 
   const googleAuth = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      setLoading(true);
+      setIsGoogleLoading(true);
       setError("");
       try {
         const res = await fetch(
@@ -49,7 +51,7 @@ export default function Login() {
         console.error(err);
         setError("Google Authentication failed. Please try again.");
       } finally {
-        setLoading(false);
+        setIsGoogleLoading(false);
       }
     },
     onError: () => setError("Google Login Failed"),
@@ -58,20 +60,20 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    setIsLoggingIn(true);
     try {
       await login(email, password);
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Invalid email or password");
     } finally {
-      setLoading(false);
+      setIsLoggingIn(false);
     }
   };
 
   const handleGoogleLogin = async (credentialResponse) => {
     setError("");
-    setLoading(true);
+    setIsGoogleLoading(true);
     try {
       // Agar aap @react-oauth/google use kar rahe hain:
       const decoded = jwtDecode(credentialResponse.credential);
@@ -85,7 +87,7 @@ export default function Login() {
       console.error(err);
       setError("Google Authentication failed. Please try again.");
     } finally {
-      setLoading(false);
+      setIsGoogleLoading(false);
     }
   };
 
@@ -119,18 +121,18 @@ export default function Login() {
         {/* Left Banner (Exact Original) */}
         <div className="p-8 md:p-12 flex flex-col justify-between border-r border-emerald-900/30">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#F5F2EB]/60">
-              Holy Basil Ayurveda
-            </span>
-            <h2 className="font-serif text-3xl md:text-4xl text-white mt-8 leading-snug">
+            <div className="mb-10 flex justify-center">
+              <img src={logoImg} alt="Holy Basil Ayurveda" className="h-28 md:h-36 lg:h-40 w-auto object-contain transition-transform hover:scale-105" />
+            </div>
+            <h2 className="font-serif text-3xl md:text-4xl text-white leading-snug text-center">
               "Rooted in ancient tradition, crafted for modern rituals."
             </h2>
-            <p className="mt-6 text-xs md:text-sm text-[#F5F2EB]/60 leading-relaxed">
+            <p className="mt-6 text-xs md:text-sm text-[#F5F2EB]/60 leading-relaxed text-center">
               Log in to access your curated orders, wishlist formulations, and
               personalized wellness journey.
             </p>
           </div>
-          <div className="pt-8 border-t border-emerald-900/20 flex items-center gap-6 text-[10px] uppercase tracking-widest text-[#F5F2EB]/60 font-bold">
+          <div className="pt-8 border-t border-emerald-900/20 flex items-center justify-center gap-6 text-[10px] uppercase tracking-widest text-[#F5F2EB]/60 font-bold">
             <span>🌿 100% Organic</span>
             <span>•</span>
             <span>GMP Certified</span>
@@ -204,10 +206,16 @@ export default function Login() {
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full py-3.5 mt-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all cursor-pointer disabled:opacity-50"
+              disabled={isLoggingIn || isGoogleLoading}
+              className={`w-full py-3.5 mt-2 rounded-xl bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all ${
+                isLoggingIn
+                  ? "opacity-80 cursor-wait"
+                  : isGoogleLoading
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-emerald-500 cursor-pointer"
+              }`}
             >
-              {loading ? "Logging in..." : "Login"}
+              {isLoggingIn ? "Logging in..." : "Login"}
             </button>
           </form>
 
@@ -215,10 +223,16 @@ export default function Login() {
           <button
             type="button"
             onClick={() => googleAuth()}
-            disabled={loading}
-            className="w-full mt-4 flex items-center justify-center gap-3 py-2.5 rounded-xl bg-[#121E1A] hover:bg-[#162521] border border-emerald-900/40 text-xs font-bold text-white transition-all cursor-pointer disabled:opacity-50"
+            disabled={isLoggingIn || isGoogleLoading}
+            className={`w-full mt-4 flex items-center justify-center gap-3 py-2.5 rounded-xl bg-[#121E1A] border border-emerald-900/40 text-xs font-bold text-white transition-all ${
+              isGoogleLoading
+                ? "opacity-80 cursor-wait"
+                : isLoggingIn
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-[#162521] cursor-pointer"
+            }`}
           >
-            {loading ? (
+            {isGoogleLoading ? (
               "Connecting..."
             ) : (
               <>

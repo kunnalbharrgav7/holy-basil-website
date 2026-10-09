@@ -9,6 +9,7 @@ import {
   Save,
 } from "lucide-react";
 import { getAdminOrderById, updateOrderStatus } from "../services/orderService";
+import { DetailSkeleton } from "../components/Skeletons";
 
 const ORDER_STATUSES = [
   "Pending",
@@ -63,10 +64,8 @@ export default function AdminOrderDetails() {
 
   if (loading)
     return (
-      <main className="min-h-screen py-12 sm:py-20 bg-[#080D0A]">
-        <div className="container-hba text-center text-sm text-[#F5F2EB]/50">
-          Loading order details...
-        </div>
+      <main className="min-h-screen bg-[#080D0A] pt-[80px]">
+        <DetailSkeleton />
       </main>
     );
   if (error)

@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { Trash2, Plus, Power, Ticket } from "lucide-react";
 import api from "../services/api"; // Path check kar lijiyega
 import toast from "react-hot-toast";
+import { TableSkeleton } from "../components/Skeletons";
 
 export default function ManageCoupons() {
   const [coupons, setCoupons] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [formData, setFormData] = useState({
     code: "",
     discountType: "percentage",
@@ -19,10 +21,13 @@ export default function ManageCoupons() {
   // Fetch all coupons
   const fetchCoupons = async () => {
     try {
+      setFetching(true);
       const { data } = await api.get("/coupons/all");
       setCoupons(data.coupons);
     } catch (error) {
       toast.error("Failed to load coupons");
+    } finally {
+      setFetching(false);
     }
   };
 
@@ -259,20 +264,23 @@ export default function ManageCoupons() {
           <h2 className="text-lg font-serif text-white mb-6">
             Active & Past Coupons
           </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead>
-                <tr className="border-b border-emerald-900/30 text-[10px] uppercase tracking-widest text-[#F5F2EB]/50">
-                  <th className="pb-3 font-bold pl-2">Code</th>
-                  <th className="pb-3 font-bold">Discount</th>
-                  <th className="pb-3 font-bold">Min Order</th>
-                  <th className="pb-3 font-bold">Expiry</th>
-                  <th className="pb-3 font-bold">Status</th>
-                  <th className="pb-3 font-bold text-right pr-2">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {coupons.map((c) => (
+          {fetching ? (
+            <TableSkeleton rows={4} columns={6} />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm whitespace-nowrap">
+                <thead>
+                  <tr className="border-b border-emerald-900/30 text-[10px] uppercase tracking-widest text-[#F5F2EB]/50">
+                    <th className="pb-3 font-bold pl-2">Code</th>
+                    <th className="pb-3 font-bold">Discount</th>
+                    <th className="pb-3 font-bold">Min Order</th>
+                    <th className="pb-3 font-bold">Expiry</th>
+                    <th className="pb-3 font-bold">Status</th>
+                    <th className="pb-3 font-bold text-right pr-2">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {coupons.map((c) => (
                   <tr
                     key={c._id}
                     className="border-b border-emerald-900/20 last:border-0 hover:bg-[#080D0A]/50 transition-colors"
@@ -329,6 +337,7 @@ export default function ManageCoupons() {
               </tbody>
             </table>
           </div>
+          )}
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@ export default function Logo() {
       <img 
         src={logoImg} 
         alt="Holy Basil Ayurveda" 
-        className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105"
+        className="h-14 sm:h-16 md:h-16 w-auto object-contain transition-transform group-hover:scale-105"
       />
     </Link>
   );

@@ -4,6 +4,7 @@ import {
   getAdminFranchiseRequests,
   updateFranchiseStatus,
 } from "../services/franchiseService";
+import { TableSkeleton } from "../components/Skeletons";
 
 export default function AdminFranchise() {
   const [requests, setRequests] = useState([]);
@@ -119,9 +120,7 @@ export default function AdminFranchise() {
         {/* List Container */}
         <div className="overflow-hidden rounded-2xl sm:rounded-[2.5rem] border border-emerald-900/30 bg-[#121E1A] shadow-lg">
           {loading ? (
-            <p className="p-12 text-center text-xs sm:text-sm text-[#F5F2EB]/50">
-              Loading requests...
-            </p>
+            <TableSkeleton rows={4} columns={3} />
           ) : filteredRequests.length === 0 ? (
             <div className="flex flex-col items-center justify-center px-4 py-16 text-center">
               <div className="grid h-12 w-12 place-items-center rounded-full bg-emerald-900/20 text-emerald-500/50">

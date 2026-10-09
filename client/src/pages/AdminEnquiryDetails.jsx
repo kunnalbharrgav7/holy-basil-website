@@ -15,6 +15,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { getAdminEnquiryById, updateEnquiry } from "../services/enquiryService";
+import { DetailSkeleton } from "../components/Skeletons";
 
 const ENQUIRY_STATUSES = [
   "New",
@@ -78,10 +79,8 @@ export default function AdminEnquiryDetailsSplit() {
 
   if (loading)
     return (
-      <main className="min-h-screen py-20 bg-[#080D0A] text-[#F5F2EB] flex items-center justify-center">
-        <div className="text-emerald-400/50 animate-pulse font-serif text-xl">
-          Loading details...
-        </div>
+      <main className="min-h-screen bg-[#080D0A] pt-[80px]">
+        <DetailSkeleton />
       </main>
     );
 

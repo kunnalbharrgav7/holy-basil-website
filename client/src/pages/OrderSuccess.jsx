@@ -94,7 +94,9 @@ export default function OrderSuccessReceipt() {
 
   // 🌟 SECURITY & UI CHECK: Is this user the assigned franchise?
   const isAssignedFranchise =
-    user?.role === "franchise" && order.fulfilledBy === (user?._id || user?.id);
+    user?.role === "franchise" &&
+    String(order.fulfilledBy?._id || order.fulfilledBy || "") ===
+      String(user?._id || user?.id || "");
 
   return (
     <div className="py-10 md:py-16">

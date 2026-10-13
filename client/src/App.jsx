@@ -1,4 +1,5 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -57,6 +58,17 @@ import FranchiseRoyalties from "./pages/franchise/FranchiseRoyalties";
 import FranchiseProfile from "./pages/franchise/FranchiseProfile";
 import FranchiseStock from "./pages/franchise/FranchiseStock";
 
+function OrderSuccessRedirect() {
+  const { user } = useAuth();
+  if (user?.role === "franchise") {
+    return <Navigate to="/franchise-portal/orders" replace />;
+  }
+  if (user?.role === "admin") {
+    return <Navigate to="/admin/orders" replace />;
+  }
+  return <Navigate to="/orders" replace />;
+}
+
 function AppContent() {
   const location = useLocation();
 
@@ -106,6 +118,7 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-success" element={<OrderSuccessRedirect />} />
           <Route path="/order-success/:id" element={<OrderSuccess />} />
           <Route path="/orders" element={<MyOrders />} />
           <Route path="/profile" element={<Profile />} />
@@ -147,6 +160,9 @@ function AppContent() {
               <Route path="stock" element={<FranchiseStock />} />
             </Route>
           </Route>
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
 

@@ -1,8 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 export default function Breadcrumbs() {
   const location = useLocation();
+  const { user } = useAuth();
   const pathnames = location.pathname.split("/").filter((x) => x);
 
   // Agar user Home page par hai, toh breadcrumbs mat dikhao
@@ -23,14 +25,35 @@ export default function Breadcrumbs() {
         </Link>
 
         {pathnames.map((value, index) => {
-          const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
+          let routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
           const isLast = index === pathnames.length - 1;
 
           // Format text (e.g., 'about' -> 'ABOUT')
-          const formattedName = decodeURIComponent(value).replace(/-/g, " ");
+          let formattedName = decodeURIComponent(value).replace(/-/g, " ");
+
+          // 🌟 Context-aware handling for order-success
+          if (value === "order-success") {
+            if (user?.role === "franchise") {
+              routeTo = "/franchise-portal/orders";
+              formattedName = "STORE ORDERS";
+            } else if (user?.role === "admin") {
+              routeTo = "/admin/orders";
+              formattedName = "ALL ORDERS";
+            } else {
+              routeTo = "/orders";
+              formattedName = "MY ORDERS";
+            }
+          } else if (
+            isLast &&
+            pathnames[index - 1] === "order-success" &&
+            value.length === 24
+          ) {
+            // Display clean short receipt ID e.g., #242289 instead of full 24-char ObjectId
+            formattedName = `#${value.slice(-6).toUpperCase()}`;
+          }
 
           return (
-            <div key={routeTo} className="flex items-center gap-2 shrink-0">
+            <div key={routeTo + index} className="flex items-center gap-2 shrink-0">
               <ChevronRight size={12} className="text-[#F5F2EB]/20" />
               {isLast ? (
                 <span className="text-emerald-400">{formattedName}</span>

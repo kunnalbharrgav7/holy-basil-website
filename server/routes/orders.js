@@ -1,4 +1,5 @@
 import { Router } from "express";
+import mongoose from "mongoose";
 import Order from "../models/Order.js";
 import Product from "../models/Product.js";
 import { auth, admin } from "../middleware/auth.js";
@@ -136,7 +137,10 @@ r.post("/", auth, async (req, res, next) => {
 
       // 👇 Added Hyperlocal Fields
       fulfillmentType: isFranchise ? "ADMIN" : fulfillmentType,
-      fulfilledBy: fulfilledBy,
+      fulfilledBy:
+        fulfilledBy && mongoose.Types.ObjectId.isValid(fulfilledBy)
+          ? new mongoose.Types.ObjectId(fulfilledBy)
+          : fulfilledBy,
       routingStage: isFranchise ? "ADMIN_CENTRAL" : routingStage,
     });
 
@@ -206,9 +210,17 @@ r.get("/assigned", auth, async (req, res, next) => {
         .json({ message: "Only franchises can view assigned orders" });
     }
 
+    const franchiseId = req.user.id;
+    const franchiseObjectId = mongoose.Types.ObjectId.isValid(franchiseId)
+      ? new mongoose.Types.ObjectId(franchiseId)
+      : null;
+
     const assignedOrders = await Order.find({
-      fulfilledBy: req.user.id,
       orderType: "B2C",
+      $or: [
+        { fulfilledBy: franchiseObjectId || franchiseId },
+        { fulfilledBy: franchiseId },
+      ],
     })
       .populate("user", "name email") // Customer details
       .populate("items.product", "name images")

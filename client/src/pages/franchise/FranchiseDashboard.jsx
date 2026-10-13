@@ -67,18 +67,26 @@ export default function FranchiseDashboard() {
   // 2. Financial Metrics (B2C)
   // Cash in hand: COD orders that are delivered and paid
   const cashCollected = b2cOrders
-    .filter((o) => o.paymentMethod === "cod" && o.paymentStatus === "Completed")
-    .reduce((sum, o) => sum + o.total, 0);
+    .filter(
+      (o) =>
+        o.paymentMethod === "cod" &&
+        (o.paymentStatus === "Completed" || o.paymentStatus === "Paid"),
+    )
+    .reduce((sum, o) => sum + (o.total || 0), 0);
 
   // Settlement Pending: Online orders delivered by franchise, but money is with Admin
   const settlementPending = b2cOrders
     .filter(
-      (o) => o.paymentMethod === "online" && o.orderStatus === "Delivered",
+      (o) =>
+        o.paymentMethod === "online" &&
+        (o.orderStatus === "Delivered" ||
+          o.paymentStatus === "Completed" ||
+          o.paymentStatus === "Paid"),
     )
-    .reduce((sum, o) => sum + o.total, 0);
+    .reduce((sum, o) => sum + (o.total || 0), 0);
 
   // 3. Wholesale Spend (B2B)
-  const totalB2bSpend = b2bOrders.reduce((sum, o) => sum + o.total, 0);
+  const totalB2bSpend = b2bOrders.reduce((sum, o) => sum + (o.total || 0), 0);
 
   return (
     <div className="animate-in fade-in duration-300">

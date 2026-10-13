@@ -10,7 +10,18 @@ export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get("category");
   const searchFromUrl = searchParams.get("search") || "";
-  const [cat, setCat] = useState(categoryFromUrl || "All");
+
+  const parseCategories = (param) => {
+    if (!param || param === "All") return [];
+    return param
+      .split(",")
+      .map((c) => c.trim())
+      .filter((c) => c && c.toLowerCase() !== "all");
+  };
+
+  const [selectedCats, setSelectedCats] = useState(() =>
+    parseCategories(categoryFromUrl),
+  );
   const [q, setQ] = useState(searchFromUrl);
 
   const [loading, setLoading] = useState(true);
@@ -20,6 +31,7 @@ export default function Products() {
   useEffect(() => {
     setQ(searchFromUrl);
   }, [searchFromUrl]);
+
   useEffect(() => {
     const loadProducts = async () => {
       try {
@@ -38,7 +50,7 @@ export default function Products() {
   }, []);
 
   useEffect(() => {
-    setCat(categoryFromUrl || "All");
+    setSelectedCats(parseCategories(categoryFromUrl));
   }, [categoryFromUrl]);
 
   const categories = useMemo(() => {
@@ -52,27 +64,54 @@ export default function Products() {
     return products.filter((product) => {
       const searchTerm = q.toLowerCase().trim();
       const productCat = (product.category || "").toLowerCase();
-      const selectedCat = cat.toLowerCase();
+
       const matchesCategory =
-        cat === "All" ||
-        productCat === selectedCat ||
-        productCat.includes(selectedCat);
+        selectedCats.length === 0 ||
+        selectedCats.some((sc) => {
+          const scLower = sc.toLowerCase();
+          return productCat === scLower || productCat.includes(scLower);
+        });
+
       const matchesSearch =
         !searchTerm ||
         product.name?.toLowerCase().includes(searchTerm) ||
         product.description?.toLowerCase().includes(searchTerm) ||
         productCat.includes(searchTerm);
+
       return matchesCategory && matchesSearch;
     });
-  }, [products, cat, q]);
+  }, [products, selectedCats, q]);
 
   const handleCategoryChange = (category) => {
-    setCat(category);
+    let nextSelected = [];
+
+    if (category === "All") {
+      nextSelected = [];
+    } else {
+      if (selectedCats.includes(category)) {
+        nextSelected = selectedCats.filter((c) => c !== category);
+      } else {
+        nextSelected = [...selectedCats, category];
+      }
+    }
+
+    setSelectedCats(nextSelected);
+
     const nextParams = new URLSearchParams(searchParams);
-    if (category === "All") nextParams.delete("category");
-    else nextParams.set("category", category);
+    if (nextSelected.length === 0) {
+      nextParams.delete("category");
+    } else {
+      nextParams.set("category", nextSelected.join(","));
+    }
     setSearchParams(nextParams);
   };
+
+  const headingText = useMemo(() => {
+    if (selectedCats.length === 0) return "All Products";
+    if (selectedCats.length === 1) return `${selectedCats[0]} Collection`;
+    if (selectedCats.length <= 3) return `${selectedCats.join(", ")} Collection`;
+    return `Filtered Products (${selectedCats.length} Categories)`;
+  }, [selectedCats]);
 
   return (
     <main className="min-h-screen bg-[#080D0A] text-[#F5F2EB] py-10 md:py-16">
@@ -95,13 +134,18 @@ export default function Products() {
 
         <div className="mb-8 flex items-center justify-between">
           <h2 className="font-serif text-2xl font-bold text-white">
-            {cat === "All" ? "All Products" : `${cat} Collection`}
+            {headingText}
           </h2>
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className="flex items-center gap-2 rounded-full bg-[#121E1A] border border-emerald-500/30 px-4 py-2 text-sm font-semibold text-emerald-400 shadow-sm md:hidden"
           >
             <SlidersHorizontal size={16} /> Filters
+            {selectedCats.length > 0 && (
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-[10px] text-white">
+                {selectedCats.length}
+              </span>
+            )}
           </button>
         </div>
 
@@ -136,39 +180,50 @@ export default function Products() {
                   </button>
                 </div>
                 <div className="space-y-3">
-                  {categories.map((category) => (
-                    <label
-                      key={category}
-                      className="flex cursor-pointer items-center gap-3 group"
-                    >
-                      <div className="relative flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={cat === category}
-                          onChange={() => handleCategoryChange(category)}
-                          className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-emerald-900/50 bg-[#080D0A] checked:border-emerald-500 checked:bg-emerald-600 transition-all"
-                        />
-                        <svg
-                          className="absolute left-1/2 top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 peer-checked:opacity-100 text-white"
-                          viewBox="0 0 14 14"
-                          fill="none"
-                        >
-                          <path
-                            d="M3 8L6 11L11 3.5"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            stroke="currentColor"
-                          />
-                        </svg>
-                      </div>
-                      <span
-                        className={`text-sm transition-colors ${cat === category ? "font-bold text-emerald-400" : "text-[#F5F2EB]/70 group-hover:text-white"}`}
+                  {categories.map((category) => {
+                    const isChecked =
+                      category === "All"
+                        ? selectedCats.length === 0
+                        : selectedCats.includes(category);
+
+                    return (
+                      <label
+                        key={category}
+                        className="flex cursor-pointer items-center gap-3 group"
                       >
-                        {category}
-                      </span>
-                    </label>
-                  ))}
+                        <div className="relative flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => handleCategoryChange(category)}
+                            className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-emerald-900/50 bg-[#080D0A] checked:border-emerald-500 checked:bg-emerald-600 transition-all"
+                          />
+                          <svg
+                            className="absolute left-1/2 top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 peer-checked:opacity-100 text-white"
+                            viewBox="0 0 14 14"
+                            fill="none"
+                          >
+                            <path
+                              d="M3 8L6 11L11 3.5"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              stroke="currentColor"
+                            />
+                          </svg>
+                        </div>
+                        <span
+                          className={`text-sm transition-colors ${
+                            isChecked
+                              ? "font-bold text-emerald-400"
+                              : "text-[#F5F2EB]/70 group-hover:text-white"
+                          }`}
+                        >
+                          {category}
+                        </span>
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
             </div>

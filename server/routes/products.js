@@ -7,7 +7,18 @@ const r = Router();
 r.get("/", async (req, res, next) => {
   try {
     const filter = { published: true };
-    if (req.query.category) filter.category = req.query.category;
+    if (req.query.category) {
+      const cats = req.query.category
+        .split(",")
+        .map((c) => c.trim())
+        .filter((c) => c && c.toLowerCase() !== "all");
+
+      if (cats.length === 1) {
+        filter.category = cats[0];
+      } else if (cats.length > 1) {
+        filter.category = { $in: cats };
+      }
+    }
     if (req.query.q) filter.name = { $regex: req.query.q, $options: "i" };
     res.json(await Product.find(filter).sort({ createdAt: -1 }));
   } catch (e) {
